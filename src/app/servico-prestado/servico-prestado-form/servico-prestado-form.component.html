@@ -1,0 +1,90 @@
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item active"><i class="fas fa-shopping-bag mr-2"></i>{{ !servico.id ? 'Novo Serviço Prestado' : 'Atualizar Serviço Prestado'}}</li>
+</ol>
+<form #form="ngForm" (submit)="onSubmit()">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-success" role="alert" *ngIf="mensagemSuccess">
+                <i class="fas fa-check mr-2"></i>Serviço Prestado salvo/atualizado com sucesso!
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="fecharAlert()"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="alert alert-danger alert-dismissible" role="alert" *ngIf="errors.length > 0">
+                <i class="fas fa-exclamation-triangle"></i> {{ errors }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="fecharAlert()"><span aria-hidden="true">&times;</span></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="servico.id">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>ID:</label>
+                <input type="text" class="form-control" name="id" [disabled]="true" [ngModel]="servico.id" >
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Data Cadastro:</label>
+                <input type="text" class="form-control" name="dataCadastro" [disabled]="true" [ngModel]="servico.dataCadastro">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Cliente:</label>
+                <select class="form-control" [(ngModel)]="servico.idCliente" [ngModelOptions]="{standalone: true}">
+                    <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">
+                        {{ cliente.nome }}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Descrição</label>
+                <input type="text" class="form-control" [(ngModel)]="servico.descricao" name="descricao">
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <label for="data">Data</label>
+            <input #inputData
+                   name="data" 
+                   id="data" 
+                   [(ngModel)]="servico.data" 
+                   class="form-control" 
+                   bsDatepicker 
+                   autocomplete="off" 
+                   [bsConfig]="{isAnimated: true}"
+                   >
+        </div>
+        <div class="col-md-6">
+            <label for="preco">Valor</label>
+            <input class="form-control" 
+                   [(ngModel)]="servico.valor" 
+                   name="valor" 
+                   id="valor" 
+                   mask="separator.2" 
+                   thousandSeparator="." 
+                   decimalMarker=",">
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary mb-3" *ngIf="!servico.id">
+                <i class="fa fa-save"></i> Salvar
+            </button>
+            <button type="submit" class="btn btn-primary mb-3" *ngIf="servico.id">
+                <i class="fa fa-save"></i> Atualizar
+            </button>
+            <button type="button" class="btn btn-secondary ml-3 mb-3" (click)="voltarParaLista()">
+                <i class="fa fa-arrow-alt-circle-left" ></i> Voltar
+            </button>
+        </div>
+    </div>
+</form>

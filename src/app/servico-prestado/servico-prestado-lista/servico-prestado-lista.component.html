@@ -1,0 +1,117 @@
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item active"><i class="fas fa-shopping-bag mr-2"></i>Serviço Prestado</li>
+</ol>
+<form #form="ngForm" (submit)="pesquisar()">
+    <div class="row">
+        <div class="col-md-6">
+            <label for="inputNome">Cliente:</label>
+            <input type="text" id="inputNome" [(ngModel)]="nome" name="nome" class="form-control">
+        </div>   
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="inputMes">Mês:</label>
+                <select [(ngModel)]="mes" name="data" class="form-control">
+                    <option [value]="m.id" *ngFor="let m of meses">{{m.nome}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-search"></i> Pesquisar
+            </button>
+
+            <button type="button" class="btn btn-warning ml-3" (click)="novoCadastro()">
+                <i class="fa fa-plus"></i> Novo
+            </button>
+        </div>
+    </div>
+</form>
+
+<br/>
+
+<div class="alert alert-warning" role="alert" *ngIf="getItensPagina().length == 0 && mensagemAlert">
+    <i class="fas fa-exclamation-triangle"></i> {{ mensagemAlert }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="fecharAlert()"><span aria-hidden="true">&times;</span></button>
+</div>
+<div class="alert alert-success" role="alert" *ngIf="getItensPagina().length > 0 && mensagemSuccess">
+    <i class="fas fa-check mr-2"></i> {{ mensagemSuccess }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="fecharAlert()"><span aria-hidden="true">&times;</span></button>
+</div>
+<div class="alert alert-danger" role="alert" *ngIf="mensagemError">
+    <i class="fas fa-exclamation-triangle"></i> {{ mensagemError }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="fecharAlert()"><span aria-hidden="true">&times;</span></button>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Cliente</th>
+                    <th>Descrição</th>
+                    <th>Preço</th>
+                    <th>Data</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let s of getItensPagina()">
+                    <td>{{ s.id }}</td>
+                    <td>{{ s.cliente.nome }}</td>
+                    <td>{{ s.descricao }}</td>
+                    <td><span class="badge bg-warning">{{ s.valor | currency: 'BRL' }}</span></td>
+                    <td><span class="badge bg-secondary text-white">{{ s.data }}</span></td>
+                    <td>
+                        <button class="btn btn-link" routerLink="/servico-prestado/form/{{ s.id }}" tooltip="Editar">
+                            <i class="fa fa-pen"></i>
+                        </button>
+                        <button class="btn btn-link-danger ml-2" data-toggle="modal" tooltip="Excluir"
+                                data-target="#modalDelecao" (click)="preparaDelecao(s)" >
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center">
+    <pagination [(ngModel)]="paginaAtual"
+                [totalItems]="lista.length"
+                [itemsPerPage]="itensPorPagina"
+                (pageChanged)="paginaAnterior()"
+                (pageChanged)="proximaPagina()"
+                [maxSize]="5"
+                [boundaryLinks]="true"
+                [rotate]="true"
+                firstText="Inicio"
+                previousText="Anterior"
+                nextText="Próximo"
+                lastText="Fim"/>
+</div>
+
+<div id="modalDelecao" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Confirmar a exclusão do serviço?</h4>
+            </div>
+            <div class="modal-body" *ngIf="servicoSelecionado">
+                Código: {{ servicoSelecionado.id }}<br/>
+                Cliente: {{ servicoSelecionado.cliente.nome }}<br/>
+                Descrição: {{ servicoSelecionado.descricao }}<br/>
+                Preço: {{ servicoSelecionado.valor }}<br/>
+                Data: {{ servicoSelecionado.data }}<br/>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" data-dismiss="modal" (click)="deletarServico()">Sim</button>
+                <button class="btn btn-danger" data-dismiss="modal">Não</button>
+            </div>
+        </div>
+    </div>
+</div>
